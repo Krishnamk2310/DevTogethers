@@ -4,7 +4,6 @@ import { Server } from "socket.io";
 import path from "path";
 
 const app = express();
-
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -24,8 +23,8 @@ io.on("connection", (socket) => {
   socket.on("join", ({ roomId, userName }) => {
     if (currentRoom) {
       socket.leave(currentRoom);
-      rooms.get(currentRoom).delete(currentUser);
-      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom)));
+      rooms.get(currentRoom)?.delete(currentUser);
+      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom) || []));
     }
 
     currentRoom = roomId;
@@ -48,11 +47,9 @@ io.on("connection", (socket) => {
 
   socket.on("leaveRoom", () => {
     if (currentRoom && currentUser) {
-      rooms.get(currentRoom).delete(currentUser);
-      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom)));
-
+      rooms.get(currentRoom)?.delete(currentUser);
+      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom) || []));
       socket.leave(currentRoom);
-
       currentRoom = null;
       currentUser = null;
     }
@@ -68,22 +65,22 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     if (currentRoom && currentUser) {
-      rooms.get(currentRoom).delete(currentUser);
-      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom)));
+      rooms.get(currentRoom)?.delete(currentUser);
+      io.to(currentRoom).emit("userJoined", Array.from(rooms.get(currentRoom) || []));
     }
-    console.log("user Disconnected");
+    console.log("User Disconnected", socket.id);
   });
 });
 
 const port = process.env.PORT || 5000;
-
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname,"/frontend/dist")));
 
-app.get("*",(req,res)=>{
-    res.sendFile(path.join(__dirname,"frontend","dist","index.html"));
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 server.listen(port, () => {
-    console.log(`server is working on http://localhost:${port}`);
+  console.log(`✅ Server running on http://localhost:${port}`);
 });
