@@ -78,11 +78,13 @@ io.on("connection", (socket) => {
 const port = process.env.PORT || 5000;
 
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname,"/frontend/dist")));
+
 
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
+
+app.use(express.static(path.join(__dirname,"/frontend/dist")));
 
 server.listen(port, () => {
     console.log(`server is working on http://localhost:${port}`);
