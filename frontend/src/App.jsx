@@ -13,6 +13,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { VscCode } from "react-icons/vsc";
+import { v4 as uuid } from "uuid";
 
 const socket = io("https://devtogethers-backend.onrender.com");
 
@@ -114,40 +115,60 @@ const App = () => {
     socket.emit("compileCode", { code, roomId, language, version });
   };
 
+  const createRoomId = () => {
+    const roomId = uuid();
+    setRoomId(roomId);
+  };
+
   if (!joined) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-200 font-sans p-4">
-        <div className="bg-gray-800 border border-gray-700 shadow-2xl rounded-xl p-8 max-w-md w-full space-y-6">
-          <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 mb-4">
-            DevTogether
-          </h1>
-          <input
-            type="text"
-            placeholder="Enter Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-          />
-          <input
-            type="text"
-            placeholder="Enter Your Username"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-          />
-          <button
-            onClick={joinRoom}
-            className="w-full bg-teal-600 text-white py-3 rounded-md font-semibold hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-teal-500 transition-colors"
-          >
-            Join Collaboration
-          </button>
-        </div>
+  <div className="flex items-center justify-center min-h-screen bg-gray-900 text-gray-200 font-sans p-4">
+    <div className="bg-gray-800 border border-gray-700 shadow-2xl rounded-xl p-8 max-w-md w-full space-y-6">
+      {/* Title */}
+      <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500 mb-4">
+        DevTogether
+      </h1>
+
+      {/* Room ID Input + Create Button */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Room ID"
+          value={roomId}
+          onChange={(e) => setRoomId(e.target.value)}
+          className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
+        />
+        <button
+          onClick={createRoomId}
+          className="px-4 py-3 bg-cyan-600 rounded-md font-semibold hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-cyan-500 transition-colors"
+        >
+          Create
+        </button>
       </div>
-    );
+
+      {/* Username Input */}
+      <input
+        type="text"
+        placeholder="Enter Your Username"
+        value={userName}
+        onChange={(e) => setUserName(e.target.value)}
+        className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
+      />
+
+      {/* Join Button */}
+      <button
+        onClick={joinRoom}
+        className="w-full bg-teal-600 text-white py-3 rounded-md font-semibold hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-teal-500 transition-colors"
+      >
+        Join Collaboration
+      </button>
+    </div>
+  </div>
+);
+
   }
 
   return (
-    // FIX: Added `flex` class here to align children horizontally
     <div className="relative flex h-screen bg-gray-900 text-gray-300 font-sans overflow-hidden">
       {/* Mobile Menu Button */}
       <button
